@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		282F0A742DFAD4A100DB9B2A /* QuizQuestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282F0A732DFAD48D00DB9B2A /* QuizQuestion.swift */; };
+		282F0A762DFAD4D100DB9B2A /* QuizQuestion+Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282F0A752DFAD4C300DB9B2A /* QuizQuestion+Mock.swift */; };
+		282F0A7A2DFAD5F600DB9B2A /* QuizStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282F0A792DFAD5EB00DB9B2A /* QuizStep.swift */; };
 		2888BC8E2DF2074900AC7E36 /* YS Display-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2888BC8C2DF2074900AC7E36 /* YS Display-Bold.ttf */; };
 		2888BC8F2DF2074900AC7E36 /* YS Display-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2888BC8D2DF2074900AC7E36 /* YS Display-Medium.ttf */; };
 		AD1ABAB22831907B00B3E448 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1ABAB12831907B00B3E448 /* AppDelegate.swift */; };
@@ -21,6 +24,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		282F0A732DFAD48D00DB9B2A /* QuizQuestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizQuestion.swift; sourceTree = "<group>"; };
+		282F0A752DFAD4C300DB9B2A /* QuizQuestion+Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QuizQuestion+Mock.swift"; sourceTree = "<group>"; };
+		282F0A792DFAD5EB00DB9B2A /* QuizStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizStep.swift; sourceTree = "<group>"; };
 		2888BC8C2DF2074900AC7E36 /* YS Display-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "YS Display-Bold.ttf"; path = "MovieQuiz/Resources/MovieQuizFonts/YS Display-Bold.ttf"; sourceTree = SOURCE_ROOT; };
 		2888BC8D2DF2074900AC7E36 /* YS Display-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "YS Display-Medium.ttf"; path = "/Users/artemkuzmenko/Desktop/HomeWork/MovieQuiz-ios/MovieQuiz/Resources/MovieQuizFonts/YS Display-Medium.ttf"; sourceTree = "<absolute>"; };
 		AD1ABAAE2831907B00B3E448 /* MovieQuiz.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MovieQuiz.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -59,6 +65,9 @@
 		611342392B701CF6003FC2A4 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				282F0A792DFAD5EB00DB9B2A /* QuizStep.swift */,
+				282F0A732DFAD48D00DB9B2A /* QuizQuestion.swift */,
+				282F0A752DFAD4C300DB9B2A /* QuizQuestion+Mock.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -204,8 +213,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				282F0A762DFAD4D100DB9B2A /* QuizQuestion+Mock.swift in Sources */,
 				AD5EE5DE284D7887003966EF /* UIColor+Extensions.swift in Sources */,
 				AD7AFA552836189F00399704 /* Array+Extensions.swift in Sources */,
+				282F0A742DFAD4A100DB9B2A /* QuizQuestion.swift in Sources */,
+				282F0A7A2DFAD5F600DB9B2A /* QuizStep.swift in Sources */,
 				AD1ABAB62831907B00B3E448 /* MovieQuizViewController.swift in Sources */,
 				AD77F5742857F8810062FB14 /* Date+Extensions.swift in Sources */,
 				AD1ABAB22831907B00B3E448 /* AppDelegate.swift in Sources */,

@@ -1,12 +1,28 @@
 //
-//  QuizQuestion+Mock.swift
+//  QuestionFactory.swift
 //  MovieQuiz
 //
-//  Created by Artem Kuzmenko on 12.06.2025.
+//  Created by Artem Kuzmenko on 29.06.2025.
 //
 
-/*extension QuizQuestion {
-    static let mockQuestions: [QuizQuestion] = [
+import Foundation
+
+class QuestionFactory: QuestionFactoryProtocol {
+    
+    weak var delegate: QuestionFactoryDelegate?
+    
+    init(delegate: QuestionFactoryDelegate? = nil) {
+            self.delegate = delegate
+        shuffledQuestions = allQuestions.shuffled()
+        }
+    
+    func setup(delegate: QuestionFactoryDelegate) {
+        self.delegate = delegate
+    }
+    
+    // MARK: - Data
+    
+    private let allQuestions: [QuizQuestion] = [
         QuizQuestion(image: "The Godfather",
                      text: "Рейтинг этого фильма больше чем 6?",
                      correctAnswer: true),
@@ -47,4 +63,21 @@
                      text: "Рейтинг этого фильма больше чем 6?",
                      correctAnswer: false)
     ]
-}*/
+    private var shuffledQuestions: [QuizQuestion] = []
+    private var currentQuestionIndex = 0
+    
+    func requestNextQuestion() {
+            guard currentQuestionIndex < shuffledQuestions.count else {
+                delegate?.didReceiveNextQuestion(question: nil)
+                return
+            }
+            
+            let question = shuffledQuestions[currentQuestionIndex]
+            currentQuestionIndex += 1
+            delegate?.didReceiveNextQuestion(question: question)
+        }
+    func reset() {
+        currentQuestionIndex = 0
+        shuffledQuestions = allQuestions.shuffled()
+    }
+}

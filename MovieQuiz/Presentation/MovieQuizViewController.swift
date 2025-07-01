@@ -24,15 +24,15 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         super.viewDidLoad()
         alertPresenter = AlertPresenter(viewController: self)
         questionFactory = QuestionFactory()
-            questionFactory?.delegate = self
-            questionFactory?.requestNextQuestion()
+        questionFactory?.delegate = self
+        questionFactory?.requestNextQuestion()
         statisticService = StatisticServiceImplementation()
-
+        
     }
     // MARK: - QuestionFactoryDelegate
-
+    
     func didReceiveNextQuestion(question: QuizQuestion?) {
-        guard let question = question else { return }
+        guard let question else { return }
         
         currentQuestion = question
         let viewModel = convert(model: question)
@@ -46,14 +46,11 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     @IBAction private func noButtonClicked(_ sender: UIButton) {
         handleAnswer(givenAnswer: false)
     }
-    
-    // MARK: - Mock
-    //  private let questions = QuizQuestion.mockQuestions
-    
+       
     // MARK: - Private Methods Game Logic
- 
+    
     private func handleAnswer(givenAnswer: Bool) {
-        guard let currentQuestion = currentQuestion else {
+        guard let currentQuestion else {
             return
         }
         let isCorrect = givenAnswer == currentQuestion.correctAnswer
@@ -114,16 +111,16 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             message: message,
             buttonText: "Сыграть ещё раз"
         ) { [weak self] in
-            guard let self = self else { return }
+            guard let self else { return }
             self.currentQuestionIndex = 0
             self.correctAnswers = 0
             self.questionFactory?.reset()
             self.questionFactory?.requestNextQuestion()
         }
-
+        
         alertPresenter?.show(alert: alertModel)
     }
-
+    
     private func showNextQuestionOrResults() {
         if currentQuestionIndex == questionsAmount - 1 {
             showQuizResults()

@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class StatisticServiceImplementation: StatisticService, StatisticServiceProtocol {
+final class StatisticServiceImplementation: StatisticServiceProtocol {
     
     // MARK: - Keys
     
@@ -19,7 +19,7 @@ final class StatisticServiceImplementation: StatisticService, StatisticServicePr
         case bestGameTotal
         case bestGameDate
     }
-
+    
     // MARK: - Properties
     
     private let storage: UserDefaults = .standard
@@ -34,7 +34,7 @@ final class StatisticServiceImplementation: StatisticService, StatisticServicePr
             storage.set(newValue, forKey: Keys.correctAnswers.rawValue)
         }
     }
-
+    
     // MARK: - StatisticServiceProtocol
     
     var gamesCount: Int {
@@ -45,14 +45,14 @@ final class StatisticServiceImplementation: StatisticService, StatisticServicePr
             storage.set(newValue, forKey: Keys.gamesCount.rawValue)
         }
     }
-
+    
     var totalAccuracy: Double {
         let totalQuestions = gamesCount * 10
         guard totalQuestions > 0 else { return 0.0 }
-
+        
         return (Double(correctAnswers) / Double(totalQuestions)) * 100
     }
-
+    
     var bestGame: GameResult {
         get {
             let correct = storage.integer(forKey: Keys.bestGameCorrect.rawValue)
@@ -66,11 +66,11 @@ final class StatisticServiceImplementation: StatisticService, StatisticServicePr
             storage.set(newValue.date, forKey: Keys.bestGameDate.rawValue)
         }
     }
-
+    
     func store(correct count: Int, total amount: Int) {
         gamesCount += 1
         correctAnswers += count
-
+        
         let currentGame = GameResult(correct: count, total: amount, date: Date())
         if currentGame.correct > bestGame.correct {
             bestGame = currentGame

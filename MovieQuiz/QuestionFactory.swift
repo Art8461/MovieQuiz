@@ -7,14 +7,14 @@
 
 import Foundation
 
-class QuestionFactory: QuestionFactoryProtocol {
+final class QuestionFactory: QuestionFactoryProtocol {
     
     weak var delegate: QuestionFactoryDelegate?
     
     init(delegate: QuestionFactoryDelegate? = nil) {
-            self.delegate = delegate
+        self.delegate = delegate
         shuffledQuestions = allQuestions.shuffled()
-        }
+    }
     
     func setup(delegate: QuestionFactoryDelegate) {
         self.delegate = delegate
@@ -67,15 +67,15 @@ class QuestionFactory: QuestionFactoryProtocol {
     private var currentQuestionIndex = 0
     
     func requestNextQuestion() {
-            guard currentQuestionIndex < shuffledQuestions.count else {
-                delegate?.didReceiveNextQuestion(question: nil)
-                return
-            }
-            
-            let question = shuffledQuestions[currentQuestionIndex]
-            currentQuestionIndex += 1
-            delegate?.didReceiveNextQuestion(question: question)
+        guard currentQuestionIndex < shuffledQuestions.count else {
+            delegate?.didReceiveNextQuestion(question: nil)
+            return
         }
+        
+        let question = shuffledQuestions[currentQuestionIndex]
+        currentQuestionIndex += 1
+        delegate?.didReceiveNextQuestion(question: question)
+    }
     func reset() {
         currentQuestionIndex = 0
         shuffledQuestions = allQuestions.shuffled()

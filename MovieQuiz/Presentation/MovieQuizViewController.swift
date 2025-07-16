@@ -7,10 +7,10 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     @IBOutlet private weak var textLabel: UILabel!
     @IBOutlet private weak var counterLabel: UILabel!
     @IBOutlet private weak var yesButtonClicked: UIButton!
-    @IBOutlet weak var titlelabel: UILabel!
     @IBOutlet private weak var noButtonClicked: UIButton!
     @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
     
+    @IBOutlet private weak var stackView: UIStackView!
     
     // MARK: - Properties
     private var currentQuestionIndex = 0
@@ -22,33 +22,59 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private var statisticService: StatisticServiceProtocol!
     private var alertPresenter: AlertPresenter?
     
+    
     // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        alertPresenter = AlertPresenter(viewController: self)
+        setupViews()
+        setupDependencies()
+        loadData()
+    }
+    private func setupViews() {
         imageView.layer.cornerRadius = 20
-        questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
-        statisticService = StatisticServiceImplementation()
         activityIndicator.hidesWhenStopped = true
         hideQuizUI()
-        showLoadingIndicator()
+    }
+
+    private func setupDependencies() {
+        alertPresenter = AlertPresenter(viewController: self)
+        questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
+        statisticService = StatisticServiceImplementation()
+    }
+
+    private func loadData() {
+        activityIndicator.startAnimating()
         questionFactory?.loadData()
     }
-    
+    private func showLoadingIndicator(){
+        activityIndicator.startAnimating()
+    }
+
     func didLoadDataFromServer() {
+        activityIndicator.stopAnimating()
         questionFactory?.requestNextQuestion()
     }
     
     func willLoadNextQuestion() {
         hideQuizUI()
         imageView.image = nil
-        showLoadingIndicator()
     }
     
     func didFailToLoadData(with error: any Error) {
+        activityIndicator.stopAnimating()
         showNetworkError(message: "Не возможно загрузить данные")
     }
-    
+    func didUpdateImage(for question: QuizQuestion) {
+        currentQuestion = question
+        if UIImage(data: question.image) != nil {
+            UIView.transition(with: imageView, duration: 0.3, options: .transitionCrossDissolve, animations: {
+                self.imageView.image = UIImage(data: question.image)
+            }, completion: nil)
+        } else {
+            imageView.image = UIImage()
+        }
+    }
+
     // MARK: - QuestionFactoryDelegate
     func didReceiveNextQuestion(question: QuizQuestion?) {
         guard let question else { return }
@@ -57,6 +83,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         let viewModel = convert(model: question)
         showQuizUI()
         show(quiz: viewModel)
+        imageView.image = nil
     }
     // MARK: - Actions
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
@@ -93,8 +120,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
     // MARK: - Updates
     private func show(quiz step: QuizStep) {
-        hideLoadingIndicator()
-        imageView.image = step.image
         textLabel.text = step.question
         counterLabel.text = step.questionNumber
         imageView.layer.borderWidth = 0
@@ -108,7 +133,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         yesButtonClicked.isEnabled = false
         noButtonClicked.isEnabled = false
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {[weak self] in
+            guard let self else { return }
             self.showNextQuestionOrResults()
             self.yesButtonClicked.isEnabled = true
             self.noButtonClicked.isEnabled = true
@@ -150,18 +176,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             questionFactory?.requestNextQuestion()
         }
     }
-    private func showLoadingIndicator() {
-        activityIndicator.isHidden = false
-        activityIndicator.startAnimating()
-    }
-    
-    private func hideLoadingIndicator() {
-        activityIndicator.isHidden = true
-        activityIndicator.stopAnimating()
-    }
     
     private func showNetworkError(message: String) {
-        hideLoadingIndicator()
         
         let model = AlertModel(
             title: "Что-то пошло не так(",
@@ -179,20 +195,10 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
     // MARK: - UI Visibility
     private func hideQuizUI() {
-        imageView.isHidden = true
-        textLabel.isHidden = true
-        counterLabel.isHidden = true
-        titlelabel.isHidden = true
-        yesButtonClicked.isHidden = true
-        noButtonClicked.isHidden = true
+        stackView.isHidden = true
     }
     
     private func showQuizUI() {
-        imageView.isHidden = false
-        textLabel.isHidden = false
-        counterLabel.isHidden = false
-        titlelabel.isHidden = false
-        yesButtonClicked.isHidden = false
-        noButtonClicked.isHidden = false
+        stackView.isHidden = false
     }
 }

@@ -22,6 +22,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="440" height="956"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="r1z-1i-XxI">
+                                <rect key="frame" x="210" y="468" width="20" height="20"/>
+                            </activityIndicatorView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="tqT-GZ-3ZJ">
                                 <rect key="frame" x="20" y="134" width="400" height="754"/>
                                 <subviews>
@@ -105,15 +108,13 @@
                                     </stackView>
                                 </subviews>
                             </stackView>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" hidesWhenStopped="YES" animating="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="r1z-1i-XxI">
-                                <rect key="frame" x="20" y="478" width="400" height="0.0"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" name="YP Black"/>
                         <constraints>
+                            <constraint firstItem="r1z-1i-XxI" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="AJo-yB-QwC"/>
                             <constraint firstItem="tqT-GZ-3ZJ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="CeJ-8e-MhI"/>
+                            <constraint firstItem="r1z-1i-XxI" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Lx9-2c-Rhj"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="tqT-GZ-3ZJ" secondAttribute="trailing" constant="20" id="Xbw-wY-3IW"/>
                             <constraint firstItem="tqT-GZ-3ZJ" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="eV2-84-3nQ"/>
                             <constraint firstItem="tqT-GZ-3ZJ" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="10" id="geY-Nr-p0E"/>
@@ -121,12 +122,12 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="activityIndicator" destination="r1z-1i-XxI" id="iSH-0O-1dS"/>
+                        <outlet property="activityIndicator" destination="r1z-1i-XxI" id="ql6-E8-fsg"/>
                         <outlet property="counterLabel" destination="kvj-16-qEb" id="zam-1y-b6l"/>
                         <outlet property="imageView" destination="ocf-v6-OwB" id="zRj-Hk-lDu"/>
                         <outlet property="noButtonClicked" destination="joN-Ql-ssd" id="Lwg-Qh-oL5"/>
+                        <outlet property="stackView" destination="tqT-GZ-3ZJ" id="YgS-68-BAK"/>
                         <outlet property="textLabel" destination="pTR-4Z-1XC" id="ose-wd-SFC"/>
-                        <outlet property="titlelabel" destination="Tz0-dv-D60" id="VUx-cg-pOV"/>
                         <outlet property="yesButtonClicked" destination="cQb-c1-fdM" id="MSB-JI-cda"/>
                     </connections>
                 </viewController>

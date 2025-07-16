@@ -16,8 +16,9 @@ struct MoviesLoader: MoviesLoading {
     
     // MARK: - URL
     private var mostPopularMoviesUrl: URL {
-        // Если мы не смогли преобразовать строку в URL, то приложение упадёт с ошибкой
-        guard let url = URL(string: "https://tv-api.com/en/API/Top250Movies/k_zcuw1ytf") else {
+        let apikey = "k_zcuw1ytf"
+        let stringUrl = "https://tv-api.com/en/API/Top250Movies/\(apikey)"
+        guard let url = URL(string: stringUrl) else {
             preconditionFailure("Unable to construct mostPopularMoviesUrl")
         }
         return url
@@ -29,12 +30,22 @@ struct MoviesLoader: MoviesLoading {
             switch result {
             case .success(let data):
                 print("✅ Получены данные: \(data.count) байт")
-                if let jsonString = String(data: data, encoding: .utf8) {
-                    print("📦 JSON от сервера:\n\(jsonString)")
-                }
                 do {
                     let mostPopularMovies = try JSONDecoder().decode(MostPopularMovies.self, from: data)
-                    print("✅ Успешно декодировано")
+                    
+                    // Обработка ошибок API
+                    if !mostPopularMovies.errorMessage.isEmpty || mostPopularMovies.items.isEmpty {
+                        let apiError = NSError(
+                            domain: "MoviesLoader",
+                            code: 1,
+                            userInfo: [NSLocalizedDescriptionKey: mostPopularMovies.errorMessage.isEmpty
+                                       ? "Сервер вернул пустой список фильмов"
+                                                                : mostPopularMovies.errorMessage]
+                        )
+                        handler(.failure(apiError))
+                        return
+                    }
+                    
                     handler(.success(mostPopularMovies))
                 } catch {
                     print("❌ Ошибка декодирования: \(error)")

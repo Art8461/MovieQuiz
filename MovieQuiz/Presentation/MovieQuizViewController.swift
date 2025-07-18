@@ -8,6 +8,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     @IBOutlet private weak var counterLabel: UILabel!
     @IBOutlet private weak var yesButtonClicked: UIButton!
     @IBOutlet private weak var noButtonClicked: UIButton!
+    @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
+    
+    @IBOutlet private weak var stackView: UIStackView!
     
     // MARK: - Properties
     private var currentQuestionIndex = 0
@@ -19,24 +22,65 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private var statisticService: StatisticServiceProtocol!
     private var alertPresenter: AlertPresenter?
     
+    
     // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        alertPresenter = AlertPresenter(viewController: self)
-        questionFactory = QuestionFactory()
-        questionFactory?.delegate = self
-        questionFactory?.requestNextQuestion()
-        statisticService = StatisticServiceImplementation()
-        
+        setupViews()
+        setupDependencies()
+        loadData()
     }
-    // MARK: - QuestionFactoryDelegate
+    private func setupViews() {
+        imageView.layer.cornerRadius = 20
+        activityIndicator.hidesWhenStopped = true
+        hideQuizUI()
+    }
+
+    private func setupDependencies() {
+        alertPresenter = AlertPresenter(viewController: self)
+        questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
+        statisticService = StatisticServiceImplementation()
+    }
+
+    private func loadData() {
+        activityIndicator.startAnimating()
+        questionFactory?.loadData()
+    }
+
+    func didLoadDataFromServer() {
+        activityIndicator.stopAnimating()
+        questionFactory?.requestNextQuestion()
+    }
     
+    func willLoadNextQuestion() {
+        hideQuizUI()
+        imageView.image = nil
+    }
+    
+    func didFailToLoadData(with error: any Error) {
+        activityIndicator.stopAnimating()
+        showNetworkError(message: "Не возможно загрузить данные")
+    }
+    func didUpdateImage(for question: QuizQuestion) {
+        currentQuestion = question
+        if UIImage(data: question.image) != nil {
+            UIView.transition(with: imageView, duration: 0.3, options: .transitionCrossDissolve, animations: {
+                self.imageView.image = UIImage(data: question.image)
+            }, completion: nil)
+        } else {
+            imageView.image = UIImage()
+        }
+    }
+
+    // MARK: - QuestionFactoryDelegate
     func didReceiveNextQuestion(question: QuizQuestion?) {
         guard let question else { return }
         
         currentQuestion = question
         let viewModel = convert(model: question)
+        showQuizUI()
         show(quiz: viewModel)
+        imageView.image = nil
     }
     // MARK: - Actions
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
@@ -46,7 +90,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     @IBAction private func noButtonClicked(_ sender: UIButton) {
         handleAnswer(givenAnswer: false)
     }
-       
+    
     // MARK: - Private Methods Game Logic
     
     private func handleAnswer(givenAnswer: Bool) {
@@ -64,7 +108,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
     private func convert(model: QuizQuestion) -> QuizStep {
         let questionStep = QuizStep(
-            image: UIImage(named: model.image) ?? UIImage(),
+            image: UIImage(data: model.image) ?? UIImage(),
             question: model.text,
             questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)"
         )
@@ -72,9 +116,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
     
     // MARK: - Updates
-    
     private func show(quiz step: QuizStep) {
-        imageView.image = step.image
         textLabel.text = step.question
         counterLabel.text = step.questionNumber
         imageView.layer.borderWidth = 0
@@ -84,10 +126,12 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 8
         imageView.layer.borderColor = isCorrect ? UIColor.ypsGreen.cgColor : UIColor.ypsRed.cgColor
+        
         yesButtonClicked.isEnabled = false
         noButtonClicked.isEnabled = false
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {[weak self] in
+            guard let self else { return }
             self.showNextQuestionOrResults()
             self.yesButtonClicked.isEnabled = true
             self.noButtonClicked.isEnabled = true
@@ -128,5 +172,30 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             currentQuestionIndex += 1
             questionFactory?.requestNextQuestion()
         }
+    }
+    
+    private func showNetworkError(message: String) {
+        
+        let model = AlertModel(
+            title: "Что-то пошло не так(",
+            message: message,
+            buttonText: "Попробовать еще раз"
+        ) { [weak self] in
+            guard let self else { return }
+            self.currentQuestionIndex = 0
+            self.correctAnswers = 0
+            self.questionFactory?.requestNextQuestion()
+        }
+        
+        alertPresenter?.show(alert: model)
+    }
+    
+    // MARK: - UI Visibility
+    private func hideQuizUI() {
+        stackView.isHidden = true
+    }
+    
+    private func showQuizUI() {
+        stackView.isHidden = false
     }
 }

@@ -46,9 +46,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         activityIndicator.startAnimating()
         questionFactory?.loadData()
     }
-    private func showLoadingIndicator(){
-        activityIndicator.startAnimating()
-    }
 
     func didLoadDataFromServer() {
         activityIndicator.stopAnimating()

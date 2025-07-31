@@ -58,20 +58,20 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     func yesButtonClicked() {
         guard isButtonsEnabled, let question = currentQuestion else { return }
         isButtonsEnabled = false
-        proceedWithAnswer(isCorrect: question.correctAnswer == true)
+        proceedWithAnswer(isCorrect: question.correctAnswer)
     }
-
+    
     func noButtonClicked() {
         guard isButtonsEnabled, let question = currentQuestion else { return }
         isButtonsEnabled = false
-        proceedWithAnswer(isCorrect: question.correctAnswer == false)
+        proceedWithAnswer(isCorrect: !question.correctAnswer)
     }
     
     func loadData() {
         viewController?.showLoadingIndicator()
         questionFactory?.loadData()
     }
-
+    
     func restartGame() {
         currentQuestionIndex = 0
         correctAnswers = 0
@@ -110,7 +110,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         viewController?.highlightImageBorder(isCorrectAnswer: isCorrect)
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-            guard let self = self else { return }
+            guard let self else { return }
             self.proceedToNextQuestionOrResults()
         }
     }
@@ -130,7 +130,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     }
     
     private func isLastQuestion() -> Bool {
-        return currentQuestionIndex == questionsAmount - 1
+        currentQuestionIndex == questionsAmount - 1
     }
     
     private func switchToNextQuestion() {

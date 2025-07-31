@@ -13,12 +13,12 @@ protocol MoviesLoading {
 struct MoviesLoader: MoviesLoading {
     // MARK: - NetworkClient
     private let networkClient: NetworkRouting
-
+    
     // MARK: - Init
     init(networkClient: NetworkRouting = NetworkClient()) {
         self.networkClient = networkClient
     }
-
+    
     // MARK: - URL
     private var mostPopularMoviesUrl: URL {
         let apikey = "k_zcuw1ytf"
@@ -28,7 +28,7 @@ struct MoviesLoader: MoviesLoading {
         }
         return url
     }
-
+    
     func loadMovies(handler: @escaping (Result<MostPopularMovies, Error>) -> Void) {
         print("📡 Загружаю фильмы...")
         networkClient.fetch(url: mostPopularMoviesUrl) { result in
@@ -37,19 +37,19 @@ struct MoviesLoader: MoviesLoading {
                 print("✅ Получены данные: \(data.count) байт")
                 do {
                     let mostPopularMovies = try JSONDecoder().decode(MostPopularMovies.self, from: data)
-
+                    
                     if !mostPopularMovies.errorMessage.isEmpty || mostPopularMovies.items.isEmpty {
                         let apiError = NSError(
                             domain: "MoviesLoader",
                             code: 1,
                             userInfo: [NSLocalizedDescriptionKey: mostPopularMovies.errorMessage.isEmpty
                                        ? "Сервер вернул пустой список фильмов"
-                                       : mostPopularMovies.errorMessage]
+                                                                : mostPopularMovies.errorMessage]
                         )
                         handler(.failure(apiError))
                         return
                     }
-
+                    
                     handler(.success(mostPopularMovies))
                 } catch {
                     print("❌ Ошибка декодирования: \(error)")

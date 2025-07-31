@@ -34,10 +34,10 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         presenter = MovieQuizPresenter(viewController: self)
         
         // Добавляем accessibilityIdentifier для UI-тестов
-                imageView.accessibilityIdentifier = "Poster"
-                counterLabel.accessibilityIdentifier = "Index"
-                yesButtonClicked.accessibilityIdentifier = "Yes"
-                noButtonClicked.accessibilityIdentifier = "No"
+        imageView.accessibilityIdentifier = "Poster"
+        counterLabel.accessibilityIdentifier = "Index"
+        yesButtonClicked.accessibilityIdentifier = "Yes"
+        noButtonClicked.accessibilityIdentifier = "No"
     }
     
     //MARK: - AlertPresenterProtocol

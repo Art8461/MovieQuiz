@@ -1,5 +1,5 @@
 //
-//  QuizResultsViewModel.swift
+//  QuizResults.swift
 //  MovieQuiz
 //
 //  Created by Artem Kuzmenko on 29.06.2025.

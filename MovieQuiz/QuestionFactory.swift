@@ -20,61 +20,36 @@ class QuestionFactory: QuestionFactoryProtocol {
     }
     
     func requestNextQuestion() {
-        guard !movies.isEmpty else {
-            loadData()
-            return
+        DispatchQueue.global().async { [weak self] in
+            guard let self = self else { return }
+            let index = (0..<self.movies.count).randomElement() ?? 0
+            
+            guard let movie = self.movies[safe: index] else { return }
+            
+            var imageData = Data()
+            
+            do {
+                imageData = try Data(contentsOf: movie.resizedImageURL)
+            } catch {
+                print("Failed to load image")
+            }
+            
+            let rating = Float(movie.rating) ?? 0
+            
+            let text = "Рейтинг этого фильма больше чем 7?"
+            let correctAnswer = rating > 7
+            
+            let question = QuizQuestion(image: imageData,
+                                        text: text,
+                                        correctAnswer: correctAnswer)
+            
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                self.delegate?.didRecieveNextQuestion(question: question)
+            }
         }
-
-        let index = (0..<movies.count).randomElement() ?? 0
-        guard let movie = movies[safe: index] else { return }
-
-        let rating = Float(movie.rating) ?? 0
-        let text = "Рейтинг этого фильма больше чем 7?"
-        let correctAnswer = rating > 7
-
-        // 1. Сначала отправляем вопрос без картинки
-        let questionWithoutImage = QuizQuestion(
-            image: Data(),
-            text: text,
-            correctAnswer: correctAnswer
-        )
-
-        DispatchQueue.main.async { [weak self] in
-            self?.delegate?.didReceiveNextQuestion(question: questionWithoutImage)
-        }
-
-        // 2. Загружаем изображение асинхронно через URLSession
-        let url = movie.resizedImageURL
-        URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
-            guard let self else { return }
-
-            if let error = error {
-                DispatchQueue.main.async {
-                    self.delegate?.didFailToLoadData(with: error)
-                }
-                return
-            }
-
-            guard let data = data else {
-                let error = NSError(domain: "ImageLoading", code: 0, userInfo: [NSLocalizedDescriptionKey: "Изображение не загрузилось"])
-                DispatchQueue.main.async {
-                    self.delegate?.didFailToLoadData(with: error)
-                }
-                return
-            }
-
-            let questionWithImage = QuizQuestion(
-                image: data,
-                text: text,
-                correctAnswer: correctAnswer
-            )
-
-            DispatchQueue.main.async {
-                self.delegate?.didUpdateImage(for: questionWithImage)
-            }
-
-        }.resume()
     }
+    
     func loadData() {
         moviesLoader.loadMovies { [weak self] result in
             DispatchQueue.main.async {
